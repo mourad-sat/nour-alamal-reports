@@ -42,7 +42,7 @@ test('التحقق من الصلاحية يتم من جدول RLS بعد getUser
 
 test('تدعم الدعوات وتعيين كلمة المرور دون كتابتها في المشروع', () => {
   const app = read('login.mjs');
-  assert.match(app, /type.*invite/);
+  assert.match(app, /passwordSetupRequired = invitationType === 'invite'/);
   assert.match(app, /auth\.updateUser\(\{ password \}\)/);
   assert.match(app, /password\.length < 12/);
   assert.match(read('supabase/bootstrap_first_admin.sql'), /email_confirmed_at is not null/i);
