@@ -14,13 +14,25 @@
 ## خطوات تفعيل المدير الأول من لوحة Supabase
 
 1. افتح [إعدادات الروابط](https://supabase.com/dashboard/project/nkrbnwvccnsanetmmuqm/auth/url-configuration).
-2. عيّن **Site URL** إلى `https://nour-alamal-reports.vercel.app/login` ليصل رابط الدعوة إلى شاشة تفعيل الحساب **مباشرةً**، وأضف **Redirect URLs**: `https://nour-alamal-reports.vercel.app/login` و`https://nour-alamal-reports.vercel.app/login.html`. نسخة التطبيق تدعم أيضًا تحويل روابط دعوات Supabase التي تصل بالخطأ إلى الصفحة الرئيسية.
+2. عيّن **Site URL** إلى `https://nour-alamal-reports.vercel.app/login.html` ليصل رابط الدعوة إلى شاشة تفعيل الحساب **مباشرةً**، وأضف **Redirect URLs**: `https://nour-alamal-reports.vercel.app/login` و`https://nour-alamal-reports.vercel.app/login.html`. نسخة التطبيق تدعم أيضًا تحويل روابط دعوات Supabase التي تصل بالخطأ إلى الصفحة الرئيسية.
 3. افتح [Authentication → Users](https://supabase.com/dashboard/project/nkrbnwvccnsanetmmuqm/auth/users) ثم اختر **Add user → Send invitation**، وأدخل البريد الإلكتروني الخاص بالمدير الأول. لا تشارك كلمة مروره معي.
 4. افتح رابط الدعوة في بريد المدير؛ يجب أن يعود إلى `/login`. من الصفحة عيّن كلمة مرور قوية لا تقل عن 12 حرفًا، وأكمل التحقق من البريد.
 5. من [SQL Editor](https://supabase.com/dashboard/project/nkrbnwvccnsanetmmuqm/sql/new)، افتح الملف `supabase/bootstrap_first_admin.sql` واستبدل `REPLACE_WITH_CONFIRMED_ADMIN_EMAIL` بالبريد الذي **تم التحقق منه**. شغّل SQL **مرة واحدة فقط** من لوحة المشروع الجديد.
 6. افتح `/login` مجددًا وحدّث الصلاحيات؛ يجب أن تظهر صفة **الإدارة**. إن لم تظهر، لا تنتقل إلى إدخال بيانات حقيقية.
 
 الملف الخاص بالتفعيل يفشل ولا يغيّر البيانات إذا لم يعثر على حساب مدعو وبريد مؤكد، ويرفض التعديل الصامت على ملف موظف موجود بالفعل.
+
+## عند ظهور خطأ `otp_expired` أو `access_denied`
+
+هذه رسالة من Supabase بأن رابط الدعوة غير صالح أو انتهت صلاحيته أو استُخدم سابقًا. **لا يمكن إصلاح الرابط المنتهي أو إعادة استعماله**؛ افتح رسالة جديدة فقط.
+
+**تحقق أولًا من وجود المستخدم داخل Authentication → Users في مشروع التقارير الجديد.**
+
+- إذا **لم يوجد مستخدم** يحمل البريد المطلوب: أرسل **دعوة جديدة** عبر `Add user → Send invitation`، ولا تستخدم استعادة كلمة المرور لأنها لا تُنشئ حسابًا جديدًا.
+- إذا **وجد المستخدم** وكان بريده مؤكدًا: افتح `/login.html` واختر زر **«وصلتني الدعوة ولم تظهر صفحة تعيين كلمة المرور»** لاستلام رسالة جديدة.
+- تأكد أن **Site URL** يشير إلى `https://nour-alamal-reports.vercel.app/login.html` وأن الرابط نفسه موجود ضمن **Redirect URLs**.
+
+لا تشارك روابط الدعوة أو رموز الدخول مع أي أحد. لا تتحول صفحة التقارير المحلية إلى نسخة آمنة لمجرد نجاح الدخول؛ ما زال ربط التقارير بقاعدة البيانات في مرحلة لاحقة.
 
 ## إذا فُتحت الصفحة الرئيسية بدل صفحة كلمة المرور
 
