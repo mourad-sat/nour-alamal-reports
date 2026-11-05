@@ -31,6 +31,18 @@
           <button id="loginButton" type="submit" class="primary">دخول آمن</button>
         </form>
 
+        <div id="recoverSwitch" class="recover-switch">
+          <button id="recoverButton" type="button" class="text-action">وصلتني الدعوة ولم تظهر صفحة تعيين كلمة المرور</button>
+        </div>
+
+        <form id="resetForm" class="form" hidden>
+          <p class="notice">إذا قُبلت الدعوة مسبقًا دون تعيين كلمة مرور، أدخل بريدك المدعو وسنرسل رابطًا آمنًا لتعيين كلمة مرور جديدة.</p>
+          <label for="resetEmail">البريد الإلكتروني الذي استلم الدعوة</label>
+          <input id="resetEmail" type="email" autocomplete="email" inputmode="email" required maxlength="254" placeholder="name@example.org" />
+          <button id="sendResetButton" type="submit" class="primary">إرسال رابط تعيين كلمة المرور</button>
+          <button id="backToLoginButton" type="button" class="secondary">العودة إلى تسجيل الدخول</button>
+        </form>
+
         <form id="passwordForm" class="form" hidden>
           <p class="notice">لإكمال قبول الدعوة، اختر كلمة مرور خاصة بحسابك.</p>
           <label for="newPassword">كلمة المرور الجديدة (12 حرفًا على الأقل)</label>
