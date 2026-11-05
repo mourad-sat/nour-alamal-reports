@@ -27,3 +27,7 @@ button.secondary{background:#e8f2f3;color:#254e60}
 .privacy{font-size:11px;color:#9a6d3f}
 :focus-visible{outline:3px solid #55b8ad;outline-offset:3px}
 @media(max-width:480px){.auth-card{padding:23px 19px}.identity strong{font-size:16px}}
+
+.recover-switch{margin-top:14px;text-align:center}
+.text-action{border:none;background:transparent;color:#087c70;text-decoration:underline;padding:8px;font-size:12px;line-height:1.6}
+.text-action:hover{color:#0c5e55}
