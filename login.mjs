@@ -23,12 +23,17 @@ const labels = {
 const el = id => document.getElementById(id);
 const loginForm = el('loginForm');
 const passwordForm = el('passwordForm');
+const resetForm = el('resetForm');
+const recoverSwitch = el('recoverSwitch');
 const profilePanel = el('profilePanel');
 const memberActions = el('memberActions');
 const status = el('status');
 
-const invitationType = new URLSearchParams(location.hash.slice(1)).get('type') ||
-  new URLSearchParams(location.search).get('type');
+const authFragment = new URLSearchParams(location.hash.slice(1));
+const authQuery = new URLSearchParams(location.search);
+const invitationType = authFragment.get('type') || authQuery.get('type');
+const callbackError = authFragment.get('error_description') || authQuery.get('error_description') ||
+  authFragment.get('error') || authQuery.get('error');
 let passwordSetupRequired = invitationType === 'invite' || invitationType === 'recovery';
 let busy = false;
 let latestCheck = 0;
@@ -40,6 +45,8 @@ function message(text, kind = '') {
 
 function show(which) {
   loginForm.hidden = which !== 'login';
+  resetForm.hidden = which !== 'reset';
+  recoverSwitch.hidden = which !== 'login';
   passwordForm.hidden = which !== 'password';
   profilePanel.hidden = which !== 'profile';
   memberActions.hidden = which !== 'password' && which !== 'profile';
@@ -49,7 +56,7 @@ function show(which) {
 
 function setBusy(flag) {
   busy = flag;
-  for (const id of ['loginButton', 'passwordButton', 'reloadButton', 'logoutButton']) {
+  for (const id of ['loginButton', 'passwordButton', 'sendResetButton', 'recoverButton', 'backToLoginButton', 'reloadButton', 'logoutButton']) {
     el(id).disabled = flag;
   }
 }
@@ -70,9 +77,12 @@ async function refreshProfile() {
 
   if (!userResult?.user) {
     show('login');
-    message(authError && authError.name !== 'AuthSessionMissingError'
-      ? 'تعذّر التحقق من الجلسة. حاول تسجيل الدخول مجددًا.'
-      : 'أدخل البريد الإلكتروني وكلمة المرور لحسابك المصرّح به.');
+    message(callbackError
+      ? 'رابط الدعوة أو الاستعادة غير صالح أو انتهت صلاحيته. استخدم خيار تعيين كلمة المرور بالبريد الإلكتروني.'
+      : authError && authError.name !== 'AuthSessionMissingError'
+        ? 'تعذّر التحقق من الجلسة. حاول تسجيل الدخول مجددًا.'
+        : 'أدخل البريد الإلكتروني وكلمة المرور لحسابك المصرّح به.',
+      callbackError ? 'error' : '');
     return;
   }
 
@@ -123,6 +133,48 @@ async function refreshProfile() {
   }
   message('تم التحقق من هوية الموظف وصلاحيته بواسطة Supabase.', 'success');
 }
+
+el('recoverButton').addEventListener('click', () => {
+  if (busy) return;
+  el('resetEmail').value = el('email').value.trim();
+  show('reset');
+  message('أدخل بريدك الذي استلم الدعوة لتعيين كلمة المرور.');
+});
+
+el('backToLoginButton').addEventListener('click', () => {
+  if (busy) return;
+  show('login');
+  message('أدخل بيانات الدخول أو اطلب رابطًا جديدًا لتعيين كلمة المرور.');
+});
+
+resetForm.addEventListener('submit', async event => {
+  event.preventDefault();
+  if (busy) return;
+  const email = el('resetEmail').value.trim();
+  if (!email) return;
+  setBusy(true);
+  message('جارٍ طلب رابط تعيين كلمة المرور…');
+  try {
+    const { error } = await client.auth.resetPasswordForEmail(email, {
+      redirectTo: location.origin + '/login.html',
+    });
+    if (error && error.status === 429) {
+      message('تم تجاوز حد إرسال الرسائل. حاول لاحقًا.', 'error');
+      return;
+    }
+    if (error) {
+      message('تعذر إرسال طلب الاستعادة الآن. تحقق من إعدادات البريد في Supabase وحاول لاحقًا.', 'error');
+      return;
+    }
+    // Generic acknowledgement avoids revealing whether a specific email is registered.
+    message('إذا كان البريد مرتبطًا بحساب، ستصلك رسالة لإعداد كلمة المرور. افتح أحدث رسالة فقط.', 'success');
+    el('resetEmail').value = '';
+  } catch {
+    message('تعذّر الاتصال بخدمة البريد. حاول مجددًا.', 'error');
+  } finally {
+    setBusy(false);
+  }
+});
 
 loginForm.addEventListener('submit', async event => {
   event.preventDefault();
@@ -207,13 +259,33 @@ client.auth.onAuthStateChange((event) => {
     passwordSetupRequired = false;
     show('login');
     message('تم تسجيل الخروج.');
+  } else if (event === 'PASSWORD_RECOVERY') {
+    passwordSetupRequired = true;
+    setTimeout(() => refreshProfile().catch(() => message('تعذّر تهيئة استعادة كلمة المرور.', 'error')), 0);
   } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
     // Do not await Supabase calls within the auth callback.
     setTimeout(() => refreshProfile().catch(() => message('تعذّر تحديث حالة الحساب.', 'error')), 0);
   }
 });
 
-refreshProfile().catch(() => {
+async function initialize() {
+  // Optional custom email templates may deliver a token_hash rather than a session hash.
+  const tokenHash = authQuery.get('token_hash') || authFragment.get('token_hash');
+  if (tokenHash && (invitationType === 'invite' || invitationType === 'recovery')) {
+    const { error } = await client.auth.verifyOtp({ token_hash: tokenHash, type: invitationType });
+    if (error) {
+      passwordSetupRequired = false;
+      show('login');
+      message('رابط الدعوة منتهي الصلاحية أو استُعمل مسبقًا. اطلب رابط تعيين كلمة المرور.', 'error');
+      return;
+    }
+    // Remove the one-time token from browser history after successful redemption.
+    history.replaceState(null, '', location.pathname);
+  }
+  await refreshProfile();
+}
+
+initialize().catch(() => {
   show('login');
   message('تعذّر تهيئة نظام الدخول. تحقق من اتصال الإنترنت.', 'error');
 });
