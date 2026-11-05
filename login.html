@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#142c3c" />
+  <meta name="description" content="تسجيل دخول موظفي جمعية نور الأمل إلى نظام تقارير الفرصة الثانية" />
+  <title>تسجيل الدخول | جمعية نور الأمل</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="login.css" />
+  <script type="module" src="login.mjs"></script>
+</head>
+<body>
+  <main class="auth-layout">
+    <div class="auth-shell">
+      <header class="identity">
+        <div class="symbol" aria-hidden="true">✧</div>
+        <div><strong>جمعية نور الأمل</strong><span>برنامج الفرصة الثانية – الجيل الجديد</span></div>
+      </header>
+      <section class="auth-card" aria-labelledby="authTitle">
+        <p class="eyebrow">البوابة المهنية المؤمّنة</p>
+        <h1 id="authTitle">تسجيل دخول الموظفين</h1>
+        <p class="hint" id="authHint">الدخول متاح للحسابات التي تدعوها إدارة الجمعية فقط. لا توجد خدمة تسجيل عمومي.</p>
+        <div id="status" class="status" role="status" aria-live="polite">جاري تهيئة الاتصال الآمن…</div>
+
+        <form id="loginForm" class="form" hidden>
+          <label for="email">البريد الإلكتروني المهني</label>
+          <input id="email" name="email" type="email" autocomplete="username" inputmode="email" required maxlength="254" placeholder="name@example.org" />
+          <label for="password">كلمة المرور</label>
+          <input id="password" name="password" type="password" autocomplete="current-password" required />
+          <button id="loginButton" type="submit" class="primary">دخول آمن</button>
+        </form>
+
+        <form id="passwordForm" class="form" hidden>
+          <p class="notice">لإكمال قبول الدعوة، اختر كلمة مرور خاصة بحسابك.</p>
+          <label for="newPassword">كلمة المرور الجديدة (12 حرفًا على الأقل)</label>
+          <input id="newPassword" type="password" autocomplete="new-password" required minlength="12" />
+          <label for="confirmPassword">تأكيد كلمة المرور</label>
+          <input id="confirmPassword" type="password" autocomplete="new-password" required minlength="12" />
+          <button id="passwordButton" type="submit" class="primary">تعيين كلمة المرور</button>
+        </form>
+
+        <section id="profilePanel" class="profile" hidden aria-labelledby="profileTitle">
+          <h2 id="profileTitle">نتيجة التحقق من الصلاحيات</h2>
+          <p id="profileText"></p>
+          <p id="centersText" class="minor"></p>
+          <p class="notice">هذه صفحة اختبار تسجيل الدخول والصلاحيات. ربط التقارير المشتركة بقاعدة البيانات هو المرحلة القادمة.</p>
+        </section>
+
+        <div id="memberActions" class="member-actions" hidden>
+          <button id="reloadButton" type="button" class="secondary">تحديث الصلاحيات</button>
+          <button id="logoutButton" type="button" class="secondary">تسجيل الخروج</button>
+        </div>
+      </section>
+      <p class="footnote">لديك حساب ولا تستطيع الدخول؟ تواصل مع مسؤول الجمعية لتفعيل صلاحيتك.</p>
+      <a class="demo-link" href="index.html">العودة إلى النسخة التجريبية (الحفظ المحلي فقط)</a>
+      <p class="privacy">لا تدخل بيانات المستفيدين الحقيقيين قبل انتهاء اختبارات الأمان وربط التقارير.</p>
+    </div>
+  </main>
+</body>
+</html>
