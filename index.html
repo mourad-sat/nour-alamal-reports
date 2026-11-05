@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#142c3c" />
+  <meta name="description" content="منصة جمعية نور الأمل لتقارير برنامج الفرصة الثانية" />
+  <title>نور الأمل | منصة التقارير</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand"><div class="brand-emblem" aria-hidden="true">✧</div><div><strong>جمعية نور الأمل</strong><small>برنامج الفرصة الثانية</small></div></div>
+      <p class="nav-caption">المساحة الرئيسية</p>
+      <nav id="mainNav" aria-label="التنقل الرئيسي">
+        <button class="nav-item active" data-page="dashboard"><span class="nav-icon">◫</span>لوحة القيادة</button>
+        <button class="nav-item" data-page="reports"><span class="nav-icon">▤</span>جميع التقارير</button>
+        <p class="nav-caption inside">أنواع التقارير</p>
+        <button class="nav-item" data-page="vocational"><span class="nav-icon">⚒</span>التكوين المهني</button>
+        <button class="nav-item" data-page="pedagogical"><span class="nav-icon">✎</span>التأهيل التربوي</button>
+        <button class="nav-item" data-page="attendance"><span class="nav-icon">▥</span>الحضور والغياب</button>
+        <button class="nav-item" data-page="activities"><span class="nav-icon">✦</span>الأنشطة الموازية</button>
+        <p class="nav-caption inside">الأدوات</p>
+        <button class="nav-item" data-page="settings"><span class="nav-icon">⚙</span>الإعدادات والنسخ</button>
+      </nav>
+      <div class="side-bottom"><span class="status-dot"></span>نسخة أولية · حفظ محلي فقط <small>لا تستعمل بيانات حقيقية للمستفيدين قبل تفعيل قاعدة بيانات آمنة.</small></div>
+    </aside>
+    <div class="mobile-overlay" id="overlay"></div>
+    <div class="main-area">
+      <header class="topbar">
+        <div class="topbar-right"><button id="menuBtn" class="icon-button mobile-menu" aria-label="فتح القائمة">☰</button><div class="breadcrumb">الفرصة الثانية <span>/</span> <strong id="breadcrumb">لوحة القيادة</strong></div></div>
+        <div class="topbar-left"><span class="date-label" id="currentDate"></span><span class="user-avatar" title="نسخة تجريبية">ن أ</span></div>
+      </header>
+      <main id="main" class="content" tabindex="-1"></main>
+      <footer class="footer">جمعية نور الأمل · منصة تقارير برنامج الفرصة الثانية <span>نسخة تجريبية مستقلة</span></footer>
+    </div>
+  </div>
+  <div id="modalRoot"></div>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <div id="printArea"></div>
+</body>
+</html>
