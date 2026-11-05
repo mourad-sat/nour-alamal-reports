@@ -1,0 +1,10 @@
+{
+  "name": "nour-alamal-reports",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Arabic reports portal for Nour Al Amal second-chance programme",
+  "scripts": {
+    "test": "node --test",
+    "check": "node --check app.js && node --test"
+  }
+}
