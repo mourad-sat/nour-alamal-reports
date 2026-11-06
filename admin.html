@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#142c3c" />
+  <meta name="description" content="إدارة المراكز والمجموعات — جمعية نور الأمل" />
+  <title>لوحة الإدارة | جمعية نور الأمل</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="admin.css" />
+  <script type="module" src="admin.mjs"></script>
+</head>
+<body>
+  <header class="header">
+    <div class="shell header-content">
+      <a href="login.html" class="brand" aria-label="العودة لصفحة الموظفين">
+        <span class="brand-icon">✧</span><span><strong>جمعية نور الأمل</strong><small>لوحة إدارة الفرصة الثانية</small></span>
+      </a>
+      <div class="header-actions"><span class="role-label" id="adminName"></span><button type="button" id="logout" class="button outline" hidden>تسجيل الخروج</button></div>
+    </div>
+  </header>
+  <main class="shell">
+    <div class="heading">
+      <div><span class="eyebrow">الإدارة المصرّح بها فقط</span><h1>إدارة المراكز والمجموعات</h1>
+      <p>أضف مراكز الجمعية والمجموعات التابعة لها إلى قاعدة البيانات الجديدة. هذه البيانات مشتركة بين حسابات الموظفين المصرّح لهم.</p></div>
+      <a href="login.html" class="button outline">العودة إلى حسابي</a>
+    </div>
+    <div id="message" class="status" role="status" aria-live="polite">جارٍ التحقق من هوية المدير…</div>
+
+    <div id="workspace" hidden>
+      <section class="intro">
+        <strong>هذه بداية الإدارة المشتركة</strong>
+        <p>سجلات المراكز والمجموعات تُحفظ في Supabase وتخضع لسياسات الصلاحيات. لم يتم بعد نقل تقارير الحصص أو بيانات الحضور من النسخة التجريبية.</p>
+      </section>
+      <div class="layout">
+        <section class="panel" aria-labelledby="centersHeading">
+          <div class="panel-head"><div><h2 id="centersHeading">المراكز</h2><p>إنشاء مركز جديد تابع للجمعية</p></div><span id="centersCount" class="count">0</span></div>
+          <form id="centerForm" class="form">
+            <label for="centerName">اسم المركز</label>
+            <input id="centerName" type="text" required minlength="2" maxlength="150" autocomplete="off" placeholder="مثال: مركز الفرصة الثانية" />
+            <button id="centerSubmit" class="button primary" type="submit">إضافة المركز</button>
+          </form>
+          <ul id="centersList" class="items" aria-label="المراكز المسجلة"></ul>
+        </section>
+        <section class="panel" aria-labelledby="groupsHeading">
+          <div class="panel-head"><div><h2 id="groupsHeading">المجموعات</h2><p>تسجيل مجموعة وربطها بمركز محدد</p></div><span id="groupsCount" class="count">0</span></div>
+          <form id="groupForm" class="form">
+            <label for="groupCenter">المركز التابع له</label>
+            <select id="groupCenter" required><option value="">اختر المركز</option></select>
+            <label for="groupName">اسم المجموعة</label>
+            <input id="groupName" type="text" required minlength="2" maxlength="150" autocomplete="off" placeholder="مثال: المجموعة أ" />
+            <button id="groupSubmit" class="button primary" type="submit">إضافة المجموعة</button>
+          </form>
+          <ul id="groupsList" class="items" aria-label="المجموعات المسجلة"></ul>
+        </section>
+      </div>
+      <p class="disclaimer">لا تُدخل معلومات شخصية للمستفيدين في هذه المرحلة. إدارة حسابات الموظفين وربط التقارير المشتركة ستأتي لاحقًا بعد اختبار الصلاحيات.</p>
+    </div>
+  </main>
+</body>
+</html>
