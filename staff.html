@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#142c3c" />
+  <meta name="description" content="إدارة موظفي جمعية نور الأمل وصلاحياتهم حسب المراكز" />
+  <title>إدارة الموظفين | جمعية نور الأمل</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="admin.css" />
+  <link rel="stylesheet" href="staff.css" />
+  <script type="module" src="staff.mjs"></script>
+</head>
+<body>
+  <header class="header">
+    <div class="shell header-content">
+      <a href="admin.html" class="brand"><span class="brand-icon">✧</span><span><strong>جمعية نور الأمل</strong><small>إدارة موظفي برنامج الفرصة الثانية</small></span></a>
+      <div class="header-actions"><span id="staffAdminName" class="role-label"></span><button id="staffLogout" type="button" class="button outline" hidden>تسجيل الخروج</button></div>
+    </div>
+  </header>
+  <main class="shell">
+    <div class="heading">
+      <div><span class="eyebrow">للمدير فقط · بيانات مشتركة</span><h1>الموظفون والصلاحيات</h1><p>إسناد الأدوار المهنية وتحديد المراكز المسموح بها، مع إمكانية إيقاف حساب الموظف مؤقتًا.</p></div>
+      <a class="button outline" href="admin.html">المراكز والمجموعات</a>
+    </div>
+    <div id="staffStatus" class="status" role="status" aria-live="polite">جارٍ التحقق من صلاحية المدير…</div>
+    <div id="staffWorkspace" hidden>
+      <section class="intro">
+        <strong>لا توجد دعوات عامة ولا إنشاء كلمات مرور من هذه الصفحة.</strong>
+        <p>أنشئ حساب الموظف في <a class="inline-link" href="https://supabase.com/dashboard/project/nkrbnwvccnsanetmmuqm/auth/users" target="_blank" rel="noopener noreferrer">Authentication → Users</a> داخل مشروع نور الأمل الجديد، وتأكد من صحة البريد. انسخ فقط <b>User UID</b> إلى النموذج أدناه. لا تُدرج كلمة مرور أو رابط دعوة في هذا النظام.</p>
+      </section>
+      <div class="staff-grid">
+        <section class="panel" aria-labelledby="addStaffHeading">
+          <div class="panel-head"><div><h2 id="addStaffHeading">تعيين موظف</h2><p>للحسابات المنشأة مسبقًا في Supabase Auth</p></div></div>
+          <form id="staffForm" class="form">
+            <label for="staffUid">معرّف الموظف (User UID)</label>
+            <input type="text" id="staffUid" required minlength="36" maxlength="36" dir="ltr" autocomplete="off" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
+            <label for="staffName">الاسم المهني للموظف</label>
+            <input id="staffName" required minlength="2" maxlength="150" autocomplete="off" placeholder="اسم الموظف" />
+            <label for="staffRole">الدور الوظيفي</label>
+            <select id="staffRole" required>
+              <option value="">اختر الدور</option>
+              <option value="vocational_instructor">مكوّن التكوين المهني</option>
+              <option value="pedagogical_instructor">مؤطر التأهيل التربوي</option>
+              <option value="activity_facilitator">منشّط الأنشطة الموازية</option>
+              <option value="attendance_officer">مكلّف الحضور والغياب</option>
+            </select>
+            <fieldset class="center-fieldset">
+              <legend>المراكز المسموح بالعمل فيها</legend>
+              <div id="staffCenters" class="center-options"></div>
+            </fieldset>
+            <button id="staffCreate" class="button primary" type="submit">حفظ الموظف وتفعيل صلاحياته</button>
+          </form>
+          <p class="field-note">لا تتيح هذه الصفحة منح دور «الإدارة». تفعيل حساب المدير الثاني عملية منفصلة تحتاج مراجعة إضافية.</p>
+        </section>
+        <section class="panel" aria-labelledby="staffHeading">
+          <div class="panel-head"><div><h2 id="staffHeading">الموظفون المسجلون</h2><p>الأدوار والحالة والمراكز المعينة</p></div><span class="count" id="staffCount">0</span></div>
+          <div id="staffList" class="staff-list"></div>
+        </section>
+      </div>
+      <p class="disclaimer">لا تُدرج بيانات المستفيدين أو القاصرين هنا. لم يُفعّل بعد ربط التقارير المشتركة أو إدارة دعوات البريد من داخل التطبيق.</p>
+    </div>
+  </main>
+</body>
+</html>
