@@ -101,6 +101,7 @@ async function refreshProfile() {
 
   if (requestNumber !== latestCheck) return;
   show('profile');
+  el('adminPanelLink').hidden = true;
 
   if (error) {
     el('profileText').textContent = 'تم تسجيل الدخول، لكن تعذّر قراءة صلاحياتك. حاول تحديث الصلاحيات أو اتصل بالمسؤول.';
@@ -119,6 +120,7 @@ async function refreshProfile() {
   el('profileText').textContent = 'مرحبًا ' + profile.full_name + ' — صفتك: ' +
     (labels[profile.role] || 'موظف');
   if (profile.role === 'admin') {
+    el('adminPanelLink').hidden = false;
     el('centersText').textContent = 'صلاحية الإدارة مثبتة في قاعدة البيانات. إدارة الموظفين وربط التقارير ستكون في المرحلة القادمة.';
   } else {
     const { data: memberships, error: membershipError } = await client
