@@ -10,3 +10,11 @@
 .staff-edit{background:white;border:1px solid #e3ecf0;border-radius:10px;margin-top:12px;padding:13px}.staff-edit p{font-size:12px;color:#5b7986;line-height:1.8}.staff-edit .center-options{margin:10px 0}
 .staff-empty{color:#75909a;text-align:center;padding:24px 10px;line-height:2;font-size:13px}
 @media(max-width:800px){.staff-grid{grid-template-columns:1fr}.staff-head{align-items:flex-start}}
+
+.invitation-section{margin-bottom:24px;padding:16px;border:1px solid #d4ebe2;border-radius:13px;background:#f8fffb}
+.invitation-section h3{font-size:16px;margin:0 0 5px;color:#0f7366}
+.invitation-section .field-note{margin:7px 0 15px}
+.invitation-section .form{margin-top:14px}
+.manual-onboarding{border-top:1px solid #e1e9ed;padding-top:16px}
+.manual-onboarding summary{cursor:pointer;line-height:1.8;font-size:13px;font-weight:750;color:#245a62;margin-bottom:15px}
+.manual-onboarding[open] summary{margin-bottom:18px}
