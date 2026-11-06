@@ -31,3 +31,6 @@ button.secondary{background:#e8f2f3;color:#254e60}
 .recover-switch{margin-top:14px;text-align:center}
 .text-action{border:none;background:transparent;color:#087c70;text-decoration:underline;padding:8px;font-size:12px;line-height:1.6}
 .text-action:hover{color:#0c5e55}
+
+.admin-link{display:inline-flex;background:#118a7c;color:#fff;font-weight:750;border-radius:10px;padding:11px 17px;font-size:13px;margin-top:12px;text-decoration:none}
+.admin-link:hover{background:#0b7168}
