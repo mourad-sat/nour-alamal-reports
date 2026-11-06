@@ -26,12 +26,38 @@
     <div id="staffStatus" class="status" role="status" aria-live="polite">جارٍ التحقق من صلاحية المدير…</div>
     <div id="staffWorkspace" hidden>
       <section class="intro">
-        <strong>لا توجد دعوات عامة ولا إنشاء كلمات مرور من هذه الصفحة.</strong>
-        <p>أنشئ حساب الموظف في <a class="inline-link" href="https://supabase.com/dashboard/project/nkrbnwvccnsanetmmuqm/auth/users" target="_blank" rel="noopener noreferrer">Authentication → Users</a> داخل مشروع نور الأمل الجديد، وتأكد من صحة البريد. انسخ فقط <b>User UID</b> إلى النموذج أدناه. لا تُدرج كلمة مرور أو رابط دعوة في هذا النظام.</p>
+        <strong>الدعوات متاحة للمدير فقط، دون تداول كلمات المرور.</strong>
+        <p>للدعوة الجديدة استخدم النموذج المباشر أدناه. إذا كان للموظف حساب مسبقًا، يمكنك ربطه يدويًا من <a class="inline-link" href="https://supabase.com/dashboard/project/nkrbnwvccnsanetmmuqm/auth/users" target="_blank" rel="noopener noreferrer">Authentication → Users</a> باستخدام User UID فقط. لا تُدرج كلمة مرور أو رابط دعوة في هذا النظام.</p>
       </section>
       <div class="staff-grid">
         <section class="panel" aria-labelledby="addStaffHeading">
-          <div class="panel-head"><div><h2 id="addStaffHeading">تعيين موظف</h2><p>للحسابات المنشأة مسبقًا في Supabase Auth</p></div></div>
+          <div class="panel-head"><div><h2 id="addStaffHeading">إضافة موظف وتحديد اختصاصه</h2><p>أرسل دعوة مباشرة، أو اربط حسابًا موجودًا مسبقًا</p></div></div>
+          <section class="invitation-section" aria-labelledby="inviteHeading">
+            <h3 id="inviteHeading">دعوة موظف جديد من داخل الموقع</h3>
+            <p class="field-note">أدخل البريد المهني والاختصاص والمراكز. سترسل الجمعية رابط دعوة ليختار الموظف كلمة مروره بنفسه. لا تطلب منه كلمة المرور.</p>
+            <form id="inviteForm" class="form">
+              <label for="inviteEmail">البريد الإلكتروني للموظف</label>
+              <input type="email" id="inviteEmail" autocomplete="off" required maxlength="254" placeholder="name@example.org" dir="ltr" />
+              <label for="inviteName">الاسم المهني</label>
+              <input id="inviteName" required minlength="2" maxlength="150" autocomplete="off" placeholder="اسم الموظف" />
+              <label for="inviteRole">اختصاص الموظف</label>
+              <select id="inviteRole" required>
+                <option value="">اختر الاختصاص</option>
+                <option value="vocational_instructor">مكوّن التكوين المهني</option>
+                <option value="pedagogical_instructor">مؤطر التأهيل التربوي</option>
+                <option value="activity_facilitator">منشّط الأنشطة الموازية</option>
+                <option value="attendance_officer">مكلّف الحضور والغياب</option>
+              </select>
+              <fieldset class="center-fieldset">
+                <legend>المراكز التي يحق للموظف العمل فيها</legend>
+                <div id="inviteCenters" class="center-options"></div>
+              </fieldset>
+              <button id="inviteSubmit" type="submit" class="button primary">إرسال الدعوة وإسناد الصلاحيات</button>
+            </form>
+            <p id="inviteNote" class="field-note">يتطلب إرسال الدعوات وجود خدمة بريد متاحة في Supabase. إذا ظهر خطأ حدّ الرسائل، اضبط SMTP خاصًا ولا تكرر الإرسال.</p>
+          </section>
+          <details class="manual-onboarding">
+            <summary>لديك موظف مسجل مسبقًا في Supabase؟ اضغط هنا لإسناد اختصاصه باستخدام User UID</summary>
           <form id="staffForm" class="form">
             <label for="staffUid">معرّف الموظف (User UID)</label>
             <input type="text" id="staffUid" required minlength="36" maxlength="36" dir="ltr" autocomplete="off" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
@@ -51,6 +77,7 @@
             </fieldset>
             <button id="staffCreate" class="button primary" type="submit">حفظ الموظف وتفعيل صلاحياته</button>
           </form>
+          </details>
           <p class="field-note">لا تتيح هذه الصفحة منح دور «الإدارة». تفعيل حساب المدير الثاني عملية منفصلة تحتاج مراجعة إضافية.</p>
         </section>
         <section class="panel" aria-labelledby="staffHeading">
