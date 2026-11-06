@@ -36,6 +36,7 @@ function status(message, mode = '') {
 function setBusy(value) {
   busy = value;
   $('staffCreate').disabled = value || !centers.length;
+  $('inviteSubmit').disabled = value || !centers.length;
   $('staffLogout').disabled = value;
   for (const b of $('staffList').querySelectorAll('button')) b.disabled = value;
 }
@@ -55,14 +56,16 @@ function optionCheckbox(center, checked = false) {
 }
 
 function renderNewUserCenters() {
-  const parent = $('staffCenters');
-  parent.replaceChildren();
-  if (!centers.length) {
-    const p = document.createElement('p');
-    p.textContent = 'لا توجد مراكز نشطة. أضف مركزًا من لوحة المراكز أولًا.';
-    parent.append(p);
-  } else {
-    for (const center of centers) parent.append(optionCheckbox(center));
+  for (const containerId of ['staffCenters', 'inviteCenters']) {
+    const parent = $(containerId);
+    parent.replaceChildren();
+    if (!centers.length) {
+      const p = document.createElement('p');
+      p.textContent = 'لا توجد مراكز نشطة. أضف مركزًا من لوحة المراكز أولًا.';
+      parent.append(p);
+    } else {
+      for (const center of centers) parent.append(optionCheckbox(center));
+    }
   }
 }
 
@@ -191,6 +194,66 @@ async function verifyAdmin() {
   $('staffWorkspace').hidden = false;
   if (await refresh()) status('تم تحميل الموظفين وتعيينات المراكز من قاعدة البيانات.', 'ok');
 }
+
+// Server-side function checks Supabase's verified JWT and the database admin role
+// before sending any email or granting staff permissions. Never put privileged keys here.
+$('inviteForm').addEventListener('submit', async event => {
+  event.preventDefault();
+  if (busy || !currentUserId) return;
+  const email = $('inviteEmail').value.trim().toLowerCase();
+  const full_name = $('inviteName').value.trim();
+  const role = $('inviteRole').value;
+  const center_ids = [...$('inviteCenters').querySelectorAll('input[type="checkbox"]:checked')]
+    .map(x => x.value);
+  const centerSet = new Set(centers.map(c => c.id));
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254 ||
+      full_name.length < 2 || full_name.length > 150 ||
+      !Object.hasOwn(ROLES, role) || center_ids.length < 1 ||
+      center_ids.some(id => !centerSet.has(id))) {
+    status('أدخل بريدًا صحيحًا واسم الموظف واختصاصه، وحدد مركزًا واحدًا على الأقل.', 'error');
+    return;
+  }
+
+  setBusy(true);
+  status('جارٍ إرسال الدعوة من خدمة Supabase الآمنة…');
+  try {
+    const { data, error } = await supabase.functions.invoke('invite-staff', {
+      body: { email, full_name, role, center_ids },
+    });
+    if (error || !data?.ok) {
+      let code = data?.code;
+      // FunctionsHttpError carries the API's structured error response.
+      if (!code && error?.context && typeof error.context.json === 'function') {
+        try { code = (await error.context.json())?.code; } catch { /* generic error */ }
+      }
+      const messages = {
+        EMAIL_RATE_LIMIT: 'استُنفد حد رسائل البريد في Supabase. لا تكرر الإرسال؛ اضبط SMTP خاصًا أو انتظر تجدد الحصة.',
+        ALREADY_EXISTS: 'البريد مرتبط بحساب موجود مسبقًا. استخدم خيار User UID لإضافة صلاحياته دون إرسال دعوة جديدة.',
+        ADMIN_REQUIRED: 'هذا الحساب لا يملك صلاحية إرسال دعوات الموظفين.',
+        LOGIN_REQUIRED: 'انتهت جلسة المدير. سجّل الدخول مجددًا.',
+        INVALID_CENTERS: 'إحدى المراكز المختارة غير نشطة أو لم تعد موجودة. أعد تحميل الصفحة.',
+        BAD_INPUT: 'البيانات غير مكتملة أو غير صحيحة. تحقق منها وأعد المحاولة.',
+        INVITED_BUT_UNASSIGNED: 'أُرسلت الدعوة لكن تعيين صلاحيات الموظف لم يكتمل. راجع الحساب في Supabase ولا تعِد إرسال الدعوة قبل التصحيح.',
+        INVITE_UNAVAILABLE: 'تعذر إرسال الدعوة عبر خدمة البريد. راجع إعدادات SMTP ومحددات الإرسال في Supabase.',
+        VERIFY_FAILED: 'تعذر التحقق من صلاحيات المدير في قاعدة البيانات.',
+        SERVER_NOT_CONFIGURED: 'خدمة دعوات الموظفين لم تكتمل تهيئتها لدى Supabase.',
+      };
+      status(messages[code] || 'تعذّر إرسال الدعوة. تحقق من الاتصال وإعدادات Supabase.', 'error');
+      return;
+    }
+    if (data.code !== 'INVITATION_SENT') {
+      status('تعذر تأكيد حالة الدعوة. تحقق من قائمة المستخدمين قبل إعادة الإرسال.', 'error');
+      return;
+    }
+    $('inviteForm').reset();
+    await refresh();
+    status('تم إرسال دعوة الموظف وحفظ اختصاصه ومراكزه. سيحدد كلمة مروره من رابط الدعوة.', 'ok');
+  } catch {
+    status('تعذر الاتصال بخدمة الدعوات. راجع الحالة قبل المحاولة مجددًا.', 'error');
+  } finally {
+    setBusy(false);
+  }
+});
 
 $('staffForm').addEventListener('submit', async event => {
   event.preventDefault();
